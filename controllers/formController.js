@@ -78,9 +78,42 @@ export const addFrom = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+export const updateFrom = async (req, res) => {
+  try {
+    const formId = req.params.id;
+    console.log(formId, req.body);
+    const fo = await Form.findById(formId);
+    // console.log(fo);
+    if (!fo) {
+      return res.status(404).json({ message: "form not found" });
+    }
+    // Update the form fields with new data
+    Object.assign(fo, req.body);
+    const savedForm = await fo.save();
+    res.status(201).json({ message: "formadded", data: savedForm });
+  } catch (error) {
+    console.error("Error saving form:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+export const deleteFrom = async (req, res) => {
+  try {
+    const formId = req.params.id;
+    const fo = await Form.findById(formId);
+    if (!fo) {
+      return res.status(404).json({ message: "form not found" });
+    }
+    const data = await Form.findByIdAndDelete(formId);
+
+    res.status(200).json({ message: "form deleted", data });
+  } catch (error) {
+    console.error("Error deleting form:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 export const getAllForms = async (req, res) => {
   try {
-    const data = await Form.find();
+    const data = await Form.find().sort({ createdAt: -1 });
     res.status(201).json({ message: "form fetched", data: data });
   } catch (error) {
     console.error("Error :", error);

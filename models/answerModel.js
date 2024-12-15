@@ -9,7 +9,7 @@ const AnswerSchema = new Schema(
     },
     answers: [
       {
-        questionId: {
+        fieldId: {
           type: String,
           required: true,
         },

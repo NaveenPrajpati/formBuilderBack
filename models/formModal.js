@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const formFieldSchema = new Schema({
+  id: { type: String },
   type: { type: String, required: true },
   question: { type: String, default: "" },
   required: { type: Boolean, default: false },

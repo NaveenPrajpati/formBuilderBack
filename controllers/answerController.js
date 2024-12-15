@@ -68,19 +68,36 @@ export const uploadImg = async (req, res) => {
 
 export const addResponse = async (req, res) => {
   try {
-    const data = req.body;
+    const { formId, answers } = req.body;
 
-    const savedForm = await answerModel.create(data);
-    res.status(201).json({ message: "Answer saved", data: savedForm });
+    if (!formId || !answers) {
+      return res
+        .status(400)
+        .json({ error: "Form ID and answers are required" });
+    }
+    const form = await Form.findById(formId);
+    if (!form) {
+      return res.status(404).json({ error: "Form not found" });
+    }
+
+    const formResponse = new answerModel({
+      formId,
+      answers,
+    });
+
+    await formResponse.save();
+
+    res.status(201).json({ message: "Answer saved", data: formResponse });
   } catch (error) {
     console.error("Error saving form:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-export const getAllForms = async (req, res) => {
+export const getFormResponses = async (req, res) => {
+  const { formId } = req.params;
   try {
-    const data = await answerModel.find();
-    res.status(201).json({ message: "Response fetched", data: data });
+    const data = await answerModel.find({ formId });
+    res.status(200).json({ message: "Response fetched", data: data });
   } catch (error) {
     console.error("Error :", error);
     res.status(500).json({ message: "Internal Server Error" });
